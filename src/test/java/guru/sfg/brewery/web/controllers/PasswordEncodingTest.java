@@ -1,9 +1,11 @@
 package guru.sfg.brewery.web.controllers;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.util.DigestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,4 +38,19 @@ public class PasswordEncodingTest {
         String encodedPassword = ldap.encode(PASSWORD);
         assertTrue(ldap.matches(PASSWORD, encodedPassword));
     }
+
+    @Test
+    void testSha256() {
+        PasswordEncoder sha = new StandardPasswordEncoder();
+        System.out.println(sha.encode(PASSWORD));
+        System.out.println(sha.encode(PASSWORD));
+    }
+
+    @Test
+    void testBcrypt() {
+        PasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        System.out.println(bcrypt.encode(PASSWORD));
+        System.out.println(bcrypt.encode(PASSWORD));
+    }
+
 }

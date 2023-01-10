@@ -10,9 +10,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
@@ -23,9 +25,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //    PasswordEncoder passwordEncoder() {
 //        return NoOpPasswordEncoder.getInstance();
 //    }
+//    @Bean
+//    PasswordEncoder passwordEncoder() {
+//        return new LdapShaPasswordEncoder();
+//    }
+
     @Bean
     PasswordEncoder passwordEncoder() {
-        return new LdapShaPasswordEncoder();
+        // return new StandardPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
     @Override
@@ -71,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password("{SSHA}9CMEIfKDVch1jUuBynaTVZiob5oB9NTTrtDsHg==")
+                .password("$2a$10$spTPbeBCfBvZfuSc03PrnurAhMzpg2UHm.20zauY7faDDtylr83nu")
                 .roles("USER");
 
         auth.inMemoryAuthentication().withUser("scott").password("tiger").roles("CUSTOMER");
