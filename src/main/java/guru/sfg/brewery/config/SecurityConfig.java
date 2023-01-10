@@ -1,5 +1,6 @@
 package guru.sfg.brewery.config;
 
+import guru.sfg.brewery.security.CustomPasswordEncoderFactories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +35,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     PasswordEncoder passwordEncoder() {
         // return new StandardPasswordEncoder();
-        return new BCryptPasswordEncoder();
+        //return new BCryptPasswordEncoder();
+        // return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return CustomPasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Override
@@ -75,13 +79,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("admin")
-                .password("password")
+                .password("{bcrypt}$2a$10$evP51N6up27REmpC4FXdt.RxDb656hmnGbPWAqmOZRFXRVec/zw3G")
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password("$2a$10$spTPbeBCfBvZfuSc03PrnurAhMzpg2UHm.20zauY7faDDtylr83nu")
+                .password("{sha256}15ab891955fd4d833cf639ce62afabc056fff52bdefd6ef187321d3c21c1065f292cecf3f8c59600")
                 .roles("USER");
 
-        auth.inMemoryAuthentication().withUser("scott").password("tiger").roles("CUSTOMER");
+        auth.inMemoryAuthentication().withUser("scott").password("{ldap}{SSHA}N9M+yT7ZKacAMc1Sp/49F5VpYZYnnZYNxWTt1g==").roles("CUSTOMER");
     }
 }
