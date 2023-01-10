@@ -49,10 +49,11 @@ public class PasswordEncodingTest {
 
     @Test
     void testBcrypt() {
-        PasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        PasswordEncoder bcrypt = new BCryptPasswordEncoder(15);
         System.out.println(bcrypt.encode(PASSWORD));
         System.out.println(bcrypt.encode(PASSWORD));
         System.out.println(bcrypt.encode("pass"));
+        System.out.println(bcrypt.encode("tiger"));
     }
 
 }
