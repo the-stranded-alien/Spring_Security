@@ -20,9 +20,11 @@ package guru.sfg.brewery.web.mappers;
 import guru.sfg.brewery.domain.BeerOrderLine;
 import guru.sfg.brewery.repositories.BeerRepository;
 import guru.sfg.brewery.web.model.BeerOrderLineDto;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+@NoArgsConstructor
 public abstract class BeerOrderLineMapperDecorator implements BeerOrderLineMapper {
     private BeerRepository beerRepository;
     private BeerOrderLineMapper beerOrderLineMapper;

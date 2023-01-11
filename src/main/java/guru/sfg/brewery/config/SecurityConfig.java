@@ -1,8 +1,10 @@
 package guru.sfg.brewery.config;
 
 import guru.sfg.brewery.security.CustomPasswordEncoderFactories;
-import guru.sfg.brewery.security.RestHeaderAuthFilter;
-import guru.sfg.brewery.security.RestUrlAuthFilter;
+import guru.sfg.brewery.security.JpaUserDetailsService;
+//import guru.sfg.brewery.security.RestHeaderAuthFilter;
+//import guru.sfg.brewery.security.RestUrlAuthFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,17 +31,17 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    public RestHeaderAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
-        RestHeaderAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
-        filter.setAuthenticationManager(authenticationManager);
-        return filter;
-    }
-
-    public RestUrlAuthFilter restUrlAuthFilter(AuthenticationManager authenticationManager) {
-        RestUrlAuthFilter filter = new RestUrlAuthFilter(new AntPathRequestMatcher("/api/**"));
-        filter.setAuthenticationManager(authenticationManager);
-        return filter;
-    }
+//    public RestHeaderAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
+//        RestHeaderAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
+//        filter.setAuthenticationManager(authenticationManager);
+//        return filter;
+//    }
+//
+//    public RestUrlAuthFilter restUrlAuthFilter(AuthenticationManager authenticationManager) {
+//        RestUrlAuthFilter filter = new RestUrlAuthFilter(new AntPathRequestMatcher("/api/**"));
+//        filter.setAuthenticationManager(authenticationManager);
+//        return filter;
+//    }
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -54,18 +56,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.addFilterBefore(
-                restHeaderAuthFilter(authenticationManager()),
-                UsernamePasswordAuthenticationFilter.class
-        ).csrf().disable();
+//        http.addFilterBefore(
+//                restHeaderAuthFilter(authenticationManager()),
+//                UsernamePasswordAuthenticationFilter.class
+//        ).csrf().disable();
+//
+//        http.addFilterBefore(
+//                restUrlAuthFilter(authenticationManager()),
+//                UsernamePasswordAuthenticationFilter.class
+//        );
 
-        http.addFilterBefore(
-                restUrlAuthFilter(authenticationManager()),
-                UsernamePasswordAuthenticationFilter.class
-        );
+        http.csrf().disable();
 
         http.authorizeRequests(authorize -> {
-                    authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()
+                    authorize
+                            .antMatchers("/h2-console/**").permitAll() // Don't do in production
+                            .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()
                             .antMatchers("/beers/find", "/beers*").permitAll()
                             .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
                             .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
@@ -76,6 +82,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().and()
                 .httpBasic();
+
+        // h2 console config
+        http.headers().frameOptions().sameOrigin();
     }
 
 //    @Override
@@ -96,18 +105,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        return new InMemoryUserDetailsManager(admin, user);
 //    }
 
+    // @Autowired
+    // JpaUserDetailsService jpaUserDetailsService;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("admin")
-                .password("{bcrypt}$2a$10$evP51N6up27REmpC4FXdt.RxDb656hmnGbPWAqmOZRFXRVec/zw3G")
-                .roles("ADMIN")
-                .and()
-                .withUser("user")
-                .password("{sha256}15ab891955fd4d833cf639ce62afabc056fff52bdefd6ef187321d3c21c1065f292cecf3f8c59600")
-                .roles("USER");
-
-        auth.inMemoryAuthentication().withUser("scott").password("{bcrypt10}$2a$10$1Xj6oNUzLtslqGELtlzUkelMCRGkKj837rfp4OMloW.R5GZJLDfO.").roles("CUSTOMER");
-    }
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // auth.userDetailsService(jpaUserDetailsService).passwordEncoder(passwordEncoder());
+//        auth.inMemoryAuthentication()
+//                .withUser("admin")
+//                .password("{bcrypt}$2a$10$evP51N6up27REmpC4FXdt.RxDb656hmnGbPWAqmOZRFXRVec/zw3G")
+//                .roles("ADMIN")
+//                .and()
+//                .withUser("user")
+//                .password("{sha256}15ab891955fd4d833cf639ce62afabc056fff52bdefd6ef187321d3c21c1065f292cecf3f8c59600")
+//                .roles("USER");
+//
+//        auth.inMemoryAuthentication().withUser("scott").password("{bcrypt10}$2a$10$1Xj6oNUzLtslqGELtlzUkelMCRGkKj837rfp4OMloW.R5GZJLDfO.").roles("CUSTOMER");
+    //}
 }
