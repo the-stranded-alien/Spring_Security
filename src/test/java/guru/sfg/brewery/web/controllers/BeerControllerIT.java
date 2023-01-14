@@ -25,11 +25,10 @@ public class BeerControllerIT extends BaseIT {
     @Nested
     class InitNewForm{
 
-        @ParameterizedTest(name = "#{index} with [{arguments}]")
-        @MethodSource("guru.sfg.brewery.web.controllers.BeerControllerIT#getStreamAllUsers")
-        void initCreationFormAuth(String user, String pwd) throws Exception {
+        @Test
+        void initCreationFormAuth() throws Exception {
 
-            mockMvc.perform(get("/beers/new").with(httpBasic(user, pwd)))
+            mockMvc.perform(get("/beers/new").with(httpBasic("admin", "pass")))
                     .andExpect(status().isOk())
                     .andExpect(view().name("beers/createBeer"))
                     .andExpect(model().attributeExists("beer"));
@@ -107,9 +106,10 @@ public class BeerControllerIT extends BaseIT {
     @Test
     void initCreationForm() throws Exception {
         mockMvc.perform(get("/beers/new").with(httpBasic("user", "password")))
-                .andExpect(status().isOk())
-                .andExpect(view().name("beers/createBeer"))
-                .andExpect(model().attributeExists("beer"));
+                .andExpect(status().isForbidden());
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("beers/createBeer"))
+//                .andExpect(model().attributeExists("beer"));
     }
 
     @Test
@@ -122,9 +122,10 @@ public class BeerControllerIT extends BaseIT {
     @Test
     void initCreationFormWithScott() throws Exception {
         mockMvc.perform(get("/beers/new").with(httpBasic("scott", "tiger")))
-                .andExpect(status().isOk())
-                .andExpect(view().name("beers/createBeer"))
-                .andExpect(model().attributeExists("beer"));
+                .andExpect(status().isForbidden());
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("beers/createBeer"))
+//                .andExpect(model().attributeExists("beer"));
     }
 
 //    @Test
